@@ -12,7 +12,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 
-const val hostIP: String = "192.168.121.15"
+const val hostIP: String = "192.168.1.28"
 const val hostPort: Int = 8080
 
 
@@ -40,7 +40,7 @@ suspend fun DefaultClientWebSocketSession.inputMessages() {
         if (message.equals("exit", true)) return
         try {
             // todo update this code - currently used for ping pong
-            send(Json.encodeToString(Ping("Ping", (System.currentTimeMillis() / 1000).toUInt())))
+            send(Json.encodeToString(Ping("Ping", (System.currentTimeMillis()).toUInt())))
             delay(200)
         } catch (e: Exception) {
             println("Error while sending: " + e.localizedMessage)
@@ -48,15 +48,15 @@ suspend fun DefaultClientWebSocketSession.inputMessages() {
         }
     }
 }
+
 suspend fun DefaultClientWebSocketSession.outputMessages() {
     try {
         for (message in incoming) {
             message as? Frame.Binary ?: continue
 
-            // todo temporary until Json.decodeToByteArray works :(
-            val decode: Pong = jsonDecodeFromByteArray(message)
-            println(decode.action)
-
+        // Ping pong test response && decode
+//            val decode: Pong = jsonDecodeFromByteArray(message)
+//            println("Action: ${decode.action} | Data: ${decode.data}")
         }
     } catch (e: Exception) {
         println("Error while receiving: " + e.localizedMessage)
@@ -75,12 +75,6 @@ data class Pong(
 )
 //endregion
 
-// This method only exists because I can't use the std to decode from ByteArray
-inline fun <reified T> jsonDecodeFromByteArray(value: Frame.Binary): T {
-    val jsonString = value.data.decodeToString()
-    return Json.decodeFromString<T>(jsonString)
-}
-
-
-
-
+// Decoding from ByteArray to Json class format <T> represents the enum/class type
+inline fun <reified T> jsonDecodeFromByteArray(value: Frame.Binary): T =
+    Json.decodeFromString<T>(value.data.decodeToString())
