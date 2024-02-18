@@ -23,11 +23,14 @@ sealed class Action {
     @Serializable
     data class MessageSend(
         val message: String,
-        val action: String = "MessageSend")
+        val action: String = "MessageSend"
+    )
+
     data class MessageEdit(
         val messageFields: String,
         val messageRemove: String,
-        val action: String = "MessageEdit")
+        val action: String = "MessageEdit"
+    )
 
     @Serializable
     data class MessageDelete(
