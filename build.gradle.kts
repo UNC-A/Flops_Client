@@ -26,7 +26,7 @@ dependencies {
         implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
         implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+        implementation("com.google.code.gson:gson:2.10.1") // Replace with the desired version
         // SLF4J API
         implementation("org.slf4j:slf4j-api:1.7.32")
 
