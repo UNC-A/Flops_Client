@@ -1,6 +1,8 @@
 package cloud.tyty.unca
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
@@ -10,6 +12,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -48,6 +51,7 @@ class WebSocketManager() {
     }
 }
 
+val sentMessages = mutableListOf<String>()
 // Composable function for Sending Messages
 @Preview
 @Composable
@@ -89,6 +93,7 @@ fun SendMessage() {
             webSocketManager.send(
                 Gson().toJson(Action.MessageSend(message))
             )
+            sentMessages.add(message)
             message = ""
         }
         flag = false
@@ -97,8 +102,19 @@ fun SendMessage() {
 
 @Preview
 @Composable
-fun SentMessageCard() {
-    // todo cards
+fun SentMessageFeed() {
+
+    var columnCount by remember { mutableIntStateOf(0)}
+    LazyColumn()
+    {
+        items(sentMessages) { item ->
+            Card(modifier = Modifier.padding(5.dp)) {
+                Text(text = item)
+                columnCount++
+            }
+        }
+    }
+    
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,7 +164,7 @@ fun openGroupScaffold() {
             modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(text = "")
+           SentMessageFeed()
 
         }
     }
