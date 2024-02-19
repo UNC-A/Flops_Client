@@ -1,3 +1,4 @@
+package cloud.tyty.unca
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
