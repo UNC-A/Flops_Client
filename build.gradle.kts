@@ -19,6 +19,9 @@ dependencies {
     val ktor_version: String by project
 
     dependencies {
+        // Material 3 Design
+        implementation("org.jetbrains.compose.material3:material3-desktop:1.2.1")
+
         implementation("io.ktor:ktor-client-core:$ktor_version")
         implementation("io.ktor:ktor-client-cio:$ktor_version")
         implementation("io.ktor:ktor-client-websockets:$ktor_version")
