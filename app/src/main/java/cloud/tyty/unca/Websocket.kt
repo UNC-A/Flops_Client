@@ -1,34 +1,59 @@
 package cloud.tyty.unca
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import cloud.tyty.unca.websocket.Response
 import com.google.gson.Gson
+import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.*
+import io.ktor.http.HttpMethod
 import io.ktor.websocket.*
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
-const val hostIP: String = "192.168.1.28"
-const val hostPort: Int = 8080
-const val hostPath: String = "?session=r7efw534543d0fhptrh"
+const val hostIP: String = "unca.toastxc.xyz"
+const val hostPort: Int = 80
+const val hostPath: String = "/ws/"
 
-
-
-suspend fun DefaultClientWebSocketSession.outputMessages() {
-    try {
-        for (message in incoming) {
-            message as? Frame.Text ?: continue
-            val gson = Gson()
-//         Ping pong test response && decode
-            val decode: Response.Pong = gsonDecodeFromByteArray(message)
-//            val decode: Pong = gson.fromJson(message, Pong::class.java)
-
-            println("Action: ${decode.action} | Data: ${decode.data}")
-        }
-    } catch (e: Exception) {
-        println("Error while receiving: " + e.localizedMessage)
+class WebSocketManager {
+    private var session: DefaultClientWebSocketSession? = null
+    suspend fun connect() {
+        val client = HttpClient { install(WebSockets) }
+        session =
+            client.webSocketSession(HttpMethod.Get, host = hostIP, port = hostPort, path = hostPath)
     }
+
+    suspend fun send(message: String) {
+        session?.send(message)
+    }
+
+    suspend fun websocketResponse(receivedMessage: MutableList<String>) {
+        session?.let { session ->
+            try {
+                for (frame in session.incoming) {
+                    if (frame is Frame.Text) {
+                        val action = Gson().fromJson(
+                            frame.data.decodeToString(), Response.ActionResponse::class.java
+                        )
+                        if (action != null)
+                        {
+                            when (action.action) {
+                                "MessageSend" -> {
+                                    val messageString = Gson().fromJson(frame.data.decodeToString(), Response.MessageSend::class.java)
+                                    receivedMessage.add(messageString.message)
+                                }
+                                "" -> {}
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    // Method to handle reception of messages
 }
-
-
-
 
 //endregion
 

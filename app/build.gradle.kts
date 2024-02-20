@@ -75,6 +75,11 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
     implementation("com.google.code.gson:gson:2.10.1") // Replace with the desired version
-    // SLF4J API
+
+//    implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.slf4j:slf4j-api:1.7.36")
+
+
+    // Logback Logging Implementation
+    implementation("ch.qos.logback:logback-classic:1.2.5")
 }

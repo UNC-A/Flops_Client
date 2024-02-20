@@ -1,4 +1,4 @@
-package cloud.tyty.unca
+package cloud.tyty.unca.websocket
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
@@ -29,7 +29,7 @@ sealed class Action {
     // region Message Send/Edit/Delete/TypeStatus
     @Serializable
     data class MessageSend(
-        val message: String,
+        val message: String = "",
         val action: String = "MessageSend"
     )
 
