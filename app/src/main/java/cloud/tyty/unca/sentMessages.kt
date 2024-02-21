@@ -32,6 +32,7 @@ import cloud.tyty.unca.websocket.Action
 import cloud.tyty.unca.websocket.Response
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
+import org.intellij.lang.annotations.JdkConstants
 
 @Composable
 fun MessageLazyColumn(
@@ -40,16 +41,26 @@ fun MessageLazyColumn(
     LazyColumn(
         Modifier
             .padding(start = 100.dp, top = 20.dp, end = 10.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.End
+
     ) {
         items(sentMessages) { message ->
-            Card(Modifier.padding(bottom = 2.dp)) {
-                Text(text = message.message, modifier = Modifier.padding(10.dp))
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End)
+            {
+                Card(Modifier.padding(bottom = 2.dp)) {
+                    Text(text = message.message, modifier = Modifier.padding(10.dp))
+                }
             }
         }
         items(receivedMessages) { received ->
-            Card(Modifier.padding(bottom = 2.dp)) {
-                Text(text = received, modifier = Modifier.padding(0.dp))
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start)
+            {
+                Card(Modifier.padding(bottom = 2.dp)) {
+                    Text(text = received, modifier = Modifier.padding(0.dp))
+                }
             }
         }
     }
@@ -62,7 +73,7 @@ fun ReceiveMessage(receivedMessages: MutableList<String>, webSocketManager: WebS
     LaunchedEffect(Unit) {
         webSocketManager.connect()
 
-        webSocketManager.websocketResponse(receivedMessages)
+
     }
 }
 

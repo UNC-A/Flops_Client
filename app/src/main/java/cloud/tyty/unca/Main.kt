@@ -93,9 +93,4 @@ fun MyAppMessages()
     }
     openGroupScaffold(webSocketManager = webSocketManager)
 
-
-
-
-
-
 }
