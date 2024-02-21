@@ -28,34 +28,6 @@ class WebSocketManager {
         session?.send(message)
     }
 
-    suspend fun websocketResponse(receivedMessage: MutableList<String>) {
-        session?.let { session ->
-            try {
-                for (frame in session.incoming) {
-                    if (frame is Frame.Text) {
-                        val action = Gson().fromJson(
-                            frame.data.decodeToString(), Response.ActionResponse::class.java
-                        )
-                        if (action != null) {
-                            when (action.action) {
-                                "MessageSend" -> {
-                                    val messageString = Gson().fromJson(
-                                        frame.data.decodeToString(),
-                                        Response.MessageSend::class.java
-                                    )
-                                    receivedMessage.add(messageString.message)
-                                }
-
-                                "" -> {}
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 //     Method to handle reception of messages
 
     private suspend fun webSocketResponse(): com.google.gson.JsonObject? {
