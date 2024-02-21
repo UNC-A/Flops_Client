@@ -23,13 +23,12 @@ class WebSocketManager {
         session =
             client.webSocketSession(HttpMethod.Get, host = hostIP, port = hostPort, path = hostPath)
     }
-
+    // sends a basic message request to the websocket server // will need user id associated with it on send
     suspend fun send(message: String) {
         session?.send(message)
     }
 
 //     Method to handle reception of messages
-
     private suspend fun webSocketResponse(): com.google.gson.JsonObject? {
         session?.let { session ->
             for (frame in session.incoming) {
@@ -42,7 +41,6 @@ class WebSocketManager {
         }
         return null
     }
-
     suspend fun webSocketDelegation() {
         while(true)
         {
