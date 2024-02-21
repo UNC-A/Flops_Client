@@ -33,40 +33,29 @@ import cloud.tyty.unca.websocket.Response
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import org.intellij.lang.annotations.JdkConstants
+import java.sql.Timestamp
 
+data class TimeStampedMessages(val messages: String, val timestamp: Long)
 @Composable
 fun MessageLazyColumn(
     sentMessages: MutableList<Action.MessageSend>
 ) {
+    val combinedMessageList = mutableListOf<TimeStampedMessages>()
 
-    LazyColumn(
-        Modifier
-            .padding(start = 15.dp, top = 20.dp, end = 15.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.End
+    receivedList.forEach { messages ->
+        combinedMessageList.add(TimeStampedMessages(messages.message, messages.timestamp))
+    }
+    sentMessages.forEach { messages ->
+        combinedMessageList.add(TimeStampedMessages(messages.message, messages.timestamp))
+    }
 
-    ) {
-        items(sentMessages) { message ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            )
-            {
-                Card(Modifier.padding(start = 110.dp)) {
-                    Text(text = message.message, modifier = Modifier.padding(10.dp))
-                }
-            }
-        }
-        items(messageList) { received ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start
-            )
-            {
-                Card(Modifier.padding(end  = 110.dp)) {
-                    Text(text = received.message, modifier = Modifier.padding(10.dp))
-                }
-            }
+
+
+    combinedMessageList.sortBy { it.timestamp }
+
+    LazyColumn() {
+        items(combinedMessageList) { message ->
+            Text(text = message.messages, modifier = Modifier.padding(10.dp))
         }
     }
 }
@@ -105,9 +94,9 @@ fun SendMessage(sentMessages: MutableList<Action.MessageSend>, webSocketManager:
     if (flag) {
         LaunchedEffect(Unit) {
             webSocketManager.send(
-                Gson().toJson(Action.MessageSend(message))
+                Gson().toJson(Action.MessageSend(message, 0))
             )
-            sentMessages.add(Action.MessageSend(message))
+            sentMessages.add(Action.MessageSend(message, 0))
             message = ""
         }
         flag = false

@@ -6,15 +6,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cloud.tyty.unca.websocket.Response
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.*
+import kotlinx.coroutines.coroutineScope
+import kotlin.coroutines.coroutineContext
 
+const val hostIP: String = /*"unca.toastxc.xyz" */ "192.168.1.28"
+const val hostPort: Int = /*80 */ 8081
+const val hostPath: String = /*"/ws/" */ ""
 
-const val hostIP: String = "unca.toastxc.xyz"
-const val hostPort: Int = 80
-const val hostPath: String = "/ws/"
 
 class WebSocketManager {
     private var session: DefaultClientWebSocketSession? = null
@@ -27,14 +30,13 @@ class WebSocketManager {
     suspend fun send(message: String) {
         session?.send(message)
     }
-
 //     Method to handle reception of messages
-    private suspend fun webSocketResponse(): com.google.gson.JsonObject? {
+    private suspend fun webSocketResponse(): JsonObject? {
         session?.let { session ->
             for (frame in session.incoming) {
                 if (frame is Frame.Text) {
                     return Gson().fromJson(
-                        frame.data.decodeToString(), com.google.gson.JsonObject::class.java
+                        frame.data.decodeToString(), JsonObject::class.java
                     )
                 }
             }
@@ -50,27 +52,43 @@ class WebSocketManager {
                     "MessageSend" -> {
                         val newMessage = Response.MessageSend(
                             message = webSocketResponse["message"].asString,
-                            action = webSocketResponse["action"].asString
+                            action = webSocketResponse["action"].asString,
+                            timestamp = webSocketResponse["timestamp"].asLong
                         )
+                        println("receieve time: ${newMessage.timestamp}")
+                        println("current sys time: ${System.currentTimeMillis() /1000}")
                         // Add the new message to the list
-                        messageList += newMessage
+                        receivedList.add(newMessage)
+                    }
+                    "MessageSendConfirm" ->
+                    {
+                        // todo implement timestamps properly
+                        val confirmationTimestamp = webSocketResponse["timestamp"].asLong
+                        // Match the confirmation with the corresponding sent message
+                        val correspondingMessage = sentMessages.find { it.timestamp == confirmationTimestamp }
+                        correspondingMessage?.timestamp = confirmationTimestamp
+
+
                     }
                 }
             }
         }
-
     }
 }
-val messageList by mutableStateOf(mutableStateListOf<Response.MessageSend>())
+val receivedList by mutableStateOf(mutableStateListOf<Response.MessageSend>())
+
+suspend fun main()
+{
+    val webSocketManager = WebSocketManager()
+    while (true)
+    {
+        webSocketManager.connect()
+        webSocketManager.webSocketDelegation()
+
+    }
 
 
-//suspend fun main() {
-//    val webSocketManager = WebSocketManager()
-//    while (true) {
-//        webSocketManager.webSocketDelegation()
-//    }
-//}
-
+}
 
 
 //endregion

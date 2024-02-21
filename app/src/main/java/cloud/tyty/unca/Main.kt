@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -40,52 +39,50 @@ fun topAppBarMessages() {
     CenterAlignedTopAppBar(colors = topAppBarColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         titleContentColor = MaterialTheme.colorScheme.primary,
-    ),
 
-        title = { /* todo username for title*/
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // todo implement default icons or similar for Icon()
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                Text(text = "Ash")
-            }
-        }, navigationIcon = {
-            IconButton(onClick = { /* todo change the current page displayed */ }, content = {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack, contentDescription = null
-                )
-            })
+        ), title = { /* todo username for title*/
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // todo implement default icons or similar for Icon()
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp)
+            )
+            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+            Text(text = "Ash")
+        }
+    }, navigationIcon = {
+        IconButton(onClick = { /* todo change the current page displayed */ }, content = {
+            Icon(
+                imageVector = Icons.Default.ArrowBack, contentDescription = null
+            )
         })
+    })
 }
+val sentMessages = mutableStateListOf<Action.MessageSend>()
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 //@Preview
 @Composable
 fun openGroupScaffold(webSocketManager: WebSocketManager) {
-    val messages = remember { mutableStateListOf<Action.MessageSend>() }
+//    val messages = remember { mutableStateListOf<Action.MessageSend>() }
 
 
     Scaffold(topBar = {
         topAppBarMessages()
     }, bottomBar = {
         Alignment.Bottom
-        SendMessage(messages, webSocketManager)
+        SendMessage(sentMessages, webSocketManager)
 
     }) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            MessageLazyColumn(sentMessages = messages)
+            MessageLazyColumn(sentMessages = sentMessages)
         }
     }
 }
-
 
 @Preview
 @Composable

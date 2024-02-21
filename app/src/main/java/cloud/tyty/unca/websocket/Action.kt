@@ -4,9 +4,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
-
-
-
+import java.sql.Timestamp
 
 
 // UNCA OPEN SPEC DOCUMENT
@@ -30,6 +28,7 @@ sealed class Action {
     @Serializable
     data class MessageSend(
         val message: String = "",
+        var timestamp: Long,
         val action: String = "MessageSend"
     )
 
@@ -42,7 +41,7 @@ sealed class Action {
     @Serializable
     data class MessageDelete(
         val messageId: UInt,
-        val action: String = "MessageDelete"
+        val action: String = "MessageDelete",
     )
 
     @Serializable

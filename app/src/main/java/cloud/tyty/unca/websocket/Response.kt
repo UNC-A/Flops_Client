@@ -17,5 +17,9 @@ sealed class Response
     data class MessageSend(
         @SerialName ("message") val message: String,
         @SerialName ("action") val action: String,
+        @SerialName ("timestamp") val timestamp: Long
         )
+    @Serializable
+    data class MessageSendConfirm(
+        @SerialName ("timestamp") val timestamp: Long)
 }
