@@ -51,17 +51,11 @@ fun topAppBarMessages() {
 }
 
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview
 @Composable
 fun openGroupScaffold(webSocketManager: WebSocketManager) {
-
-    val received = remember { mutableStateListOf<String>()}
     val messages = remember { mutableStateListOf<Action.MessageSend>() }
-
-    ReceiveMessage(receivedMessages = received, webSocketManager)
 
 
     Scaffold(topBar = {
@@ -75,7 +69,7 @@ fun openGroupScaffold(webSocketManager: WebSocketManager) {
             modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            MessageLazyColumn(sentMessages = messages, receivedMessages = received)
+            MessageLazyColumn(sentMessages = messages)
         }
     }
 }
@@ -83,14 +77,12 @@ fun openGroupScaffold(webSocketManager: WebSocketManager) {
 
 @Preview
 @Composable
-fun MyAppMessages()
-{
-
+fun MyAppMessages() {
     val webSocketManager = WebSocketManager()
-    LaunchedEffect(Unit)
-    {
-     webSocketManager.connect()
+    LaunchedEffect(Unit) {
+        webSocketManager.connect()
+        webSocketManager.webSocketDelegation() // websocket delegation for receiving messages
+        // would prefer a separate method for this however, unsure how to approach
     }
     openGroupScaffold(webSocketManager = webSocketManager)
-
 }

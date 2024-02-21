@@ -36,44 +36,38 @@ import org.intellij.lang.annotations.JdkConstants
 
 @Composable
 fun MessageLazyColumn(
-    sentMessages: MutableList<Action.MessageSend>, receivedMessages: MutableList<String>
+    sentMessages: MutableList<Action.MessageSend>
 ) {
+
     LazyColumn(
         Modifier
-            .padding(start = 100.dp, top = 20.dp, end = 10.dp)
+            .padding(start = 15.dp, top = 20.dp, end = 15.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.End
 
     ) {
         items(sentMessages) { message ->
-            Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            )
             {
-                Card(Modifier.padding(bottom = 2.dp)) {
+                Card(Modifier.padding(start = 110.dp)) {
                     Text(text = message.message, modifier = Modifier.padding(10.dp))
                 }
             }
         }
-        items(receivedMessages) { received ->
-            Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start)
+        items(messageList) { received ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            )
             {
-                Card(Modifier.padding(bottom = 2.dp)) {
-                    Text(text = received, modifier = Modifier.padding(0.dp))
+                Card(Modifier.padding(end  = 110.dp)) {
+                    Text(text = received.message, modifier = Modifier.padding(10.dp))
                 }
             }
         }
-    }
-}
-
-
-@Composable
-fun ReceiveMessage(receivedMessages: MutableList<String>, webSocketManager: WebSocketManager) {
-
-    LaunchedEffect(Unit) {
-        webSocketManager.connect()
-
-
     }
 }
 

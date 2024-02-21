@@ -72,33 +72,34 @@ class WebSocketManager {
     }
 
     suspend fun webSocketDelegation() {
-        val messageSend = mutableListOf<Response.MessageSend>()
-
-        val webSocketResponse = webSocketResponse()
-        if (webSocketResponse != null) {
-            when (webSocketResponse["action"].asString) {
-                "MessageSend" -> {
-                    val newMessage = Response.MessageSend(
-                        message = webSocketResponse["message"].asString,
-                        action = webSocketResponse["action"].asString
-                    )
-                     // Add the new message to the list
-                    messageList += newMessage
+        while(true)
+        {
+            val webSocketResponse = webSocketResponse()
+            if (webSocketResponse != null) {
+                when (webSocketResponse["action"].asString) {
+                    "MessageSend" -> {
+                        val newMessage = Response.MessageSend(
+                            message = webSocketResponse["message"].asString,
+                            action = webSocketResponse["action"].asString
+                        )
+                        // Add the new message to the list
+                        messageList += newMessage
+                    }
                 }
             }
         }
+
     }
 }
-var messageList by mutableStateOf(mutableStateListOf<Response.MessageSend>())
+val messageList by mutableStateOf(mutableStateListOf<Response.MessageSend>())
 
 
-suspend fun main() {
-    val webSocketManager = WebSocketManager()
-    while (true) {
-        webSocketManager.connect()
-        webSocketManager.webSocketDelegation()
-    }
-}
+//suspend fun main() {
+//    val webSocketManager = WebSocketManager()
+//    while (true) {
+//        webSocketManager.webSocketDelegation()
+//    }
+//}
 
 
 
