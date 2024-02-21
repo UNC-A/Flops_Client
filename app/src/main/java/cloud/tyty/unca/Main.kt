@@ -1,5 +1,8 @@
 package cloud.tyty.unca
 
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -19,6 +22,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cloud.tyty.unca.websocket.Action
 import cloud.tyty.unca.websocket.Response
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MyAppMessages()
+        }
+    }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
