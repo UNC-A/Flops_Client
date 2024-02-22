@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="HomeScaffold">
+        <State />
+      </entry>
       <entry key="MyAppMessages">
         <State />
       </entry>

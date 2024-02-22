@@ -51,14 +51,12 @@ fun lazyListChannels() {
 
             )
         }
-
     })
 }
 
 data class dummyUsers(
     val name: String, val timestamp: Long, val lastMessage: String, val icon: ImageVector
 )
-
 val dummyUserList = mutableListOf<dummyUsers>()
 fun addDummyUsers() {
     dummyUserList.add(
