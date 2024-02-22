@@ -61,7 +61,6 @@ fun topAppBarMessages() {
 }
 val sentMessages = mutableStateListOf<Action.MessageSend>()
 
-
 //@Preview
 @Composable
 fun openGroupScaffold(webSocketManager: WebSocketManager) {

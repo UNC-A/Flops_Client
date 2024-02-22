@@ -12,9 +12,12 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults.containerColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,31 +34,60 @@ import androidx.compose.ui.unit.dp
 import cloud.tyty.unca.websocket.Action
 import cloud.tyty.unca.websocket.Response
 import com.google.gson.Gson
+import io.ktor.http.HttpHeaders.Date
 import kotlinx.coroutines.delay
 import org.intellij.lang.annotations.JdkConstants
 import java.sql.Timestamp
+import java.util.Date
 
-data class TimeStampedMessages(val messages: String, val timestamp: Long)
+data class TimeStampedMessages(
+    val messages: String, val timestamp: Long, val sent: Boolean
+)
+
 @Composable
 fun MessageLazyColumn(
     sentMessages: MutableList<Action.MessageSend>
 ) {
     val combinedMessageList = mutableListOf<TimeStampedMessages>()
 
+
     receivedList.forEach { messages ->
-        combinedMessageList.add(TimeStampedMessages(messages.message, messages.timestamp))
+        combinedMessageList.add(
+            TimeStampedMessages(
+                messages.message, messages.timestamp, false
+            )
+        )
     }
     sentMessages.forEach { messages ->
-        combinedMessageList.add(TimeStampedMessages(messages.message, messages.timestamp))
+        combinedMessageList.add(
+            TimeStampedMessages(
+                messages.message, messages.timestamp, true
+            )
+        )
     }
-
-
-
     combinedMessageList.sortBy { it.timestamp }
 
     LazyColumn() {
         items(combinedMessageList) { message ->
-            Text(text = message.messages, modifier = Modifier.padding(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = if (message.sent) Arrangement.End else Arrangement.Start
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (message.sent) MaterialTheme.colorScheme.secondaryContainer else (MaterialTheme.colorScheme.tertiaryContainer),
+                        contentColor = if (message.sent) MaterialTheme.colorScheme.secondary else (MaterialTheme.colorScheme.tertiary)
+                    ),
+                    modifier = Modifier.padding(
+                        start = if (message.sent) 110.dp else 20.dp,
+                        end = if (message.sent) 20.dp else 110.dp,
+                        top = 4.dp
+                    ),
+                ) {
+                    Text(text = message.messages, modifier = Modifier.padding(10.dp))
+                }
+                Text(text = Date(message.timestamp).toString(), siz)
+            }
         }
     }
 }
@@ -94,9 +126,9 @@ fun SendMessage(sentMessages: MutableList<Action.MessageSend>, webSocketManager:
     if (flag) {
         LaunchedEffect(Unit) {
             webSocketManager.send(
-                Gson().toJson(Action.MessageSend(message, 0))
+                Gson().toJson(Action.MessageSend(message, (System.currentTimeMillis() / 1000)))
             )
-            sentMessages.add(Action.MessageSend(message, 0))
+            sentMessages.add(Action.MessageSend(message, (System.currentTimeMillis() / 1000)))
             message = ""
         }
         flag = false

@@ -14,9 +14,9 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.coroutineScope
 import kotlin.coroutines.coroutineContext
 
-const val hostIP: String = /*"unca.toastxc.xyz" */ "192.168.1.28"
-const val hostPort: Int = /*80 */ 8081
-const val hostPath: String = /*"/ws/" */ ""
+const val hostIP: String = "unca.toastxc.xyz"
+const val hostPort: Int = 80
+const val hostPath: String = "/ws/"
 
 
 class WebSocketManager {
@@ -53,22 +53,13 @@ class WebSocketManager {
                         val newMessage = Response.MessageSend(
                             message = webSocketResponse["message"].asString,
                             action = webSocketResponse["action"].asString,
-                            timestamp = webSocketResponse["timestamp"].asLong
+                            timestamp = (System.currentTimeMillis() / 1000) // todo implement proper time management
                         )
-                        println("receieve time: ${newMessage.timestamp}")
-                        println("current sys time: ${System.currentTimeMillis() /1000}")
                         // Add the new message to the list
                         receivedList.add(newMessage)
                     }
                     "MessageSendConfirm" ->
                     {
-                        // todo implement timestamps properly
-                        val confirmationTimestamp = webSocketResponse["timestamp"].asLong
-                        // Match the confirmation with the corresponding sent message
-                        val correspondingMessage = sentMessages.find { it.timestamp == confirmationTimestamp }
-                        correspondingMessage?.timestamp = confirmationTimestamp
-
-
                     }
                 }
             }
@@ -84,7 +75,6 @@ suspend fun main()
     {
         webSocketManager.connect()
         webSocketManager.webSocketDelegation()
-
     }
 
 
