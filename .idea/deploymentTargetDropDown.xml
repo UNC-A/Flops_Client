@@ -21,10 +21,19 @@
           <timeTargetWasSelectedWithDropDown value="2024-02-20T07:00:42.300017100Z" />
         </State>
       </entry>
+      <entry key="TopAppBarMessages">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>
+      <entry key="lazyListChannels">
+        <State />
+      </entry>
       <entry key="openGroupScaffold">
+        <State />
+      </entry>
+      <entry key="topAppBarMessages">
         <State />
       </entry>
     </value>

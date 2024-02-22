@@ -1,0 +1,30 @@
+package cloud.tyty.unca.openMessages
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import cloud.tyty.unca.WebSocketManager
+
+@Composable
+fun openGroupScaffold(webSocketManager: WebSocketManager) {
+
+    Scaffold(topBar = {
+        topAppBarMessages()
+    }, bottomBar = {
+        Alignment.Bottom
+        SendMessage(sentMessages, webSocketManager)
+
+    }) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            MessageLazyColumn(sentMessages = sentMessages)
+        }
+    }
+}

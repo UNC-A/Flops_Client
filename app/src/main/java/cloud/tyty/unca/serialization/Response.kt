@@ -1,4 +1,5 @@
-package cloud.tyty.unca.websocket
+package cloud.tyty.unca.serialization
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

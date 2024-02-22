@@ -3,16 +3,13 @@ package cloud.tyty.unca
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import cloud.tyty.unca.websocket.Response
+import cloud.tyty.unca.serialization.Response
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.*
-import kotlinx.coroutines.coroutineScope
-import kotlin.coroutines.coroutineContext
 
 const val hostIP: String = "unca.toastxc.xyz"
 const val hostPort: Int = 80

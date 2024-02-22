@@ -1,10 +1,5 @@
-package cloud.tyty.unca.websocket
-import io.ktor.client.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
+package cloud.tyty.unca.serialization
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 
 
 // UNCA OPEN SPEC DOCUMENT
