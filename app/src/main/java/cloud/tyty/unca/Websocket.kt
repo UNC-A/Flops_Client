@@ -53,7 +53,7 @@ class WebSocketManager {
                         val newMessage = Response.MessageSend(
                             message = webSocketResponse["message"].asString,
                             action = webSocketResponse["action"].asString,
-                            timestamp = (System.currentTimeMillis() / 1000) // todo implement proper time management
+                            timestamp = (System.currentTimeMillis()) // todo implement proper time management
                         )
                         // Add the new message to the list
                         receivedList.add(newMessage)
@@ -79,8 +79,6 @@ suspend fun main()
 
 
 }
-
-
 //endregion
 
 // Decoding from ByteArray to Gson class format <T> represents the enum/class type

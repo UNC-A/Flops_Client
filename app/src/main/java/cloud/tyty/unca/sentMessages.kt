@@ -1,6 +1,7 @@
 package cloud.tyty.unca
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cloud.tyty.unca.websocket.Action
 import cloud.tyty.unca.websocket.Response
 import com.google.gson.Gson
@@ -73,20 +75,30 @@ fun MessageLazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = if (message.sent) Arrangement.End else Arrangement.Start
             ) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (message.sent) MaterialTheme.colorScheme.secondaryContainer else (MaterialTheme.colorScheme.tertiaryContainer),
-                        contentColor = if (message.sent) MaterialTheme.colorScheme.secondary else (MaterialTheme.colorScheme.tertiary)
-                    ),
+                Column(
                     modifier = Modifier.padding(
                         start = if (message.sent) 110.dp else 20.dp,
                         end = if (message.sent) 20.dp else 110.dp,
                         top = 4.dp
-                    ),
+                    )
                 ) {
-                    Text(text = message.messages, modifier = Modifier.padding(10.dp))
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (message.sent) MaterialTheme.colorScheme.secondaryContainer else (MaterialTheme.colorScheme.tertiaryContainer),
+                            contentColor = if (message.sent) MaterialTheme.colorScheme.secondary else (MaterialTheme.colorScheme.tertiary)
+                        ),
+                    ) {
+                        Text(text = message.messages, modifier = Modifier.padding(10.dp))
+                    }
+                    // todo display time history for messages
+                    // will likely use a groupBy method to sort as such.
+                    // This needs to be done per user - will need new schema for such a task
+//                    Text(
+//                        text = timestampConversion(message.timestamp),
+//                        modifier = Modifier,
+//                        fontSize = 8.sp
+//                    )
                 }
-                Text(text = Date(message.timestamp).toString(), siz)
             }
         }
     }
@@ -123,12 +135,12 @@ fun SendMessage(sentMessages: MutableList<Action.MessageSend>, webSocketManager:
                 })
             })
     }
-    if (flag) {
+    if (flag && message != "") {
         LaunchedEffect(Unit) {
             webSocketManager.send(
-                Gson().toJson(Action.MessageSend(message, (System.currentTimeMillis() / 1000)))
+                Gson().toJson(Action.MessageSend(message, (System.currentTimeMillis())))
             )
-            sentMessages.add(Action.MessageSend(message, (System.currentTimeMillis() / 1000)))
+            sentMessages.add(Action.MessageSend(message, (System.currentTimeMillis())))
             message = ""
         }
         flag = false
