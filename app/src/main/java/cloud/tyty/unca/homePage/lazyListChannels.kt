@@ -57,23 +57,15 @@ fun lazyListChannels() {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                            .fillMaxWidth(0.3f)
-                            .padding(start = 5.dp)
-                        )
-                        {
 
-                            Text(text = users.name, style = MaterialTheme.typography.titleSmall, maxLines = 2)
-                        }
-                        Spacer(Modifier.padding(horizontal = 8.dp))
                         Column(modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .padding(vertical = 24.dp))
+                            .fillMaxWidth(0.9f)
+                            .padding(vertical = 15.dp))
                         {
+                            Text(text = users.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                             Text(text = users.lastMessage, maxLines = 2)
                         }
-                        Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-                        Text(text = timeStampLazyList(users.timestamp), style = MaterialTheme.typography.bodySmall, maxLines = 2)
+                        Text(text = timeStampLazyList(users.timestamp), style = MaterialTheme.typography.labelSmall, maxLines = 1)
                     }
                 }
             }
@@ -96,7 +88,7 @@ val dummyUserList = mutableListOf<dummyUsers>()
 fun addDummyUsers() {
     dummyUserList.add(
         dummyUsers(
-            "Kaia Collett",
+            "Kaia",
             timestamp = 1708576972,
             lastMessage = "How are you doing today? Remember, we have dinner tonight at 6!",
             icon = Icons.Default.AccountCircle
@@ -104,7 +96,7 @@ fun addDummyUsers() {
     )
     dummyUserList.add(
         dummyUsers(
-            "Ash Thornborough",
+            "Ashy",
             1708579723,
             "Hello, I am just writing this to test the effectiveness of the lazyColumn",
             Icons.Default.AccountCircle

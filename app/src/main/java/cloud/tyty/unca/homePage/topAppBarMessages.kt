@@ -20,11 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cloud.tyty.unca.mainApp.CurrentPage
+import cloud.tyty.unca.mainApp.MyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun TopAppBarRoot() {
+    val myViewModel: MyViewModel = viewModel()
+
     TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         titleContentColor = MaterialTheme.colorScheme.primary,
@@ -41,7 +46,7 @@ fun TopAppBarRoot() {
             Text(text = "Messages")
         }
     }, navigationIcon = {
-        IconButton(onClick = { /* todo change the current page displayed */ }, content = {
+        IconButton(onClick = { myViewModel.setCurrentPageState(CurrentPage.MESSAGES) }, content = {
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = null,
