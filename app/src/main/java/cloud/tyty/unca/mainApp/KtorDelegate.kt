@@ -1,24 +1,13 @@
 package cloud.tyty.unca.mainApp
 
-import android.content.Context
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import cloud.tyty.unca.database.Message
 import cloud.tyty.unca.database.MessagesViewModel
-import cloud.tyty.unca.serialization.Response
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 // wss://unca.toastxc.xyz/v1/ws/?session=fdaihbfdsuhdsa
 //const val host: String = "unca.toastxc.xyz/v0/ws/?session=fdaihbfdsuhdsa"
@@ -33,11 +22,9 @@ class WebSocketManager {
         session =
             client.webSocketSession(HttpMethod.Get, host = hostIP, port = hostPort, path = hostPath)
     }
-    // sends a basic message request to the websocket server // will need user id associated with it on send
     suspend fun send(message: String) {
         session?.send(message)
     }
-//     Method to handle reception of messages
     private suspend fun webSocketResponse(): JsonObject? {
         session?.let { session ->
             for (frame in session.incoming) {
@@ -53,7 +40,6 @@ class WebSocketManager {
     suspend fun webSocketDelegation(
         viewModel: MessagesViewModel
     ) {
-
         while(true)
         {
             val webSocketResponse = webSocketResponse()
@@ -61,14 +47,8 @@ class WebSocketManager {
                 when (webSocketResponse["action"].asString) {
                     "MessageSend" -> {
                         val receivedMessage = webSocketResponse["message"].asString
-                        val newMessage = Response.MessageSend(
-                            message = webSocketResponse["message"].asString,
-                            action = webSocketResponse["action"].asString,
-                            timestamp = (System.currentTimeMillis()) // todo implement proper time management
-                        )
 
                         // Add the new message to the list
-                        receivedList.add(newMessage)
                         val receivedMessages = Message(System.currentTimeMillis(), false, "channel1", receivedMessage)
                         viewModel.insertMessage(receivedMessages)
                     }
@@ -77,20 +57,3 @@ class WebSocketManager {
         }
     }
 }
-val receivedList by mutableStateOf(mutableStateListOf<Response.MessageSend>())
-
-//suspend fun main()
-//{
-//    val webSocketManager = WebSocketManager()
-//    while (true)
-//    {
-//        webSocketManager.connect()
-//        webSocketManager.webSocketDelegation()
-//    }
-//
-//}
-//endregion
-
-// Decoding from ByteArray to Gson class format <T> represents the enum/class type
-inline fun <reified T> gsonDecodeFromByteArray(value: Frame): T =
-    Gson().fromJson(value.data.decodeToString(), T::class.java)

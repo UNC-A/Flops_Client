@@ -23,7 +23,7 @@ class MainApp : ComponentActivity() {
         Room.databaseBuilder(
             context = applicationContext,
             klass = MessagesDatabase::class.java,
-            name = "datamodel.db"
+            name = "database.db"
         ).build()
     }
     private val messagesViewModel by viewModels<MessagesViewModel>(

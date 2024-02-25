@@ -1,6 +1,5 @@
 package cloud.tyty.unca.openMessages
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,14 +17,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cloud.tyty.unca.database.Message
 import cloud.tyty.unca.database.MessagesViewModel
@@ -33,24 +30,14 @@ import cloud.tyty.unca.mainApp.WebSocketManager
 import cloud.tyty.unca.serialization.Action
 import com.google.gson.Gson
 
-
-// used to group and sort messages depending on sent and received
-
-
-// This calls the /websocket/Action.MessageSend data class for storing message data
-val sentMessages = mutableStateListOf<Action.MessageSend>()
-
-
 @Composable
 fun SendMessage(
     webSocketManager: WebSocketManager,
     viewModel: MessagesViewModel
 ) {
 
-
     var message by remember { mutableStateOf("") }
     var flag by remember { mutableStateOf(false) }
-
 
     Row(
         Modifier
@@ -63,7 +50,7 @@ fun SendMessage(
         TextField(value = message,
             onValueChange = { message = it },
             Modifier
-                .weight(1f) // TextField takes up all the available space
+                .weight(1f)
                 .clip(MaterialTheme.shapes.medium.copy(CornerSize(10.dp))),
             placeholder = { Text(text = "Message") },
             trailingIcon = {

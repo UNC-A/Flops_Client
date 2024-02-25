@@ -26,7 +26,7 @@ import cloud.tyty.unca.mainApp.MyViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun topAppBarMessages() {
+fun TopAppBarMessages() {
     val myViewModel: MyViewModel = viewModel()
     CenterAlignedTopAppBar(colors = TopAppBarDefaults.topAppBarColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,

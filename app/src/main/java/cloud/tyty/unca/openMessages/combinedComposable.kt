@@ -1,6 +1,5 @@
 package cloud.tyty.unca.openMessages
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -8,14 +7,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cloud.tyty.unca.database.MessagesViewModel
-import cloud.tyty.unca.mainApp.MyViewModel
 import cloud.tyty.unca.mainApp.WebSocketManager
-
-
 
 @Composable
 fun MyAppMessages(viewModel: MessagesViewModel) {
@@ -26,7 +20,7 @@ fun MyAppMessages(viewModel: MessagesViewModel) {
         // would prefer a separate method for this however, unsure how to approach
     }
     Scaffold(topBar = {
-        topAppBarMessages()
+        TopAppBarMessages()
     }, bottomBar = {
         Alignment.Bottom
         SendMessage(webSocketManager, viewModel)
@@ -40,8 +34,3 @@ fun MyAppMessages(viewModel: MessagesViewModel) {
         }
     }
 }
-
-
-
-
-
