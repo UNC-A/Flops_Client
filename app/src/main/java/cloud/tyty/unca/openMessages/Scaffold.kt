@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cloud.tyty.unca.WebSocketManager
+import cloud.tyty.unca.mainApp.WebSocketManager
 
 @Composable
 fun openGroupScaffold(webSocketManager: WebSocketManager) {

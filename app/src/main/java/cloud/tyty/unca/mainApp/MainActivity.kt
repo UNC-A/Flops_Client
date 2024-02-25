@@ -19,12 +19,10 @@ class MainApp : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel = ViewModelProvider(this)[MyViewModel::class.java]
-
-            setContent {
-
-                MyApp(viewModel = viewModel)
-            }
+        setContent {
+            MyApp(viewModel = viewModel)
         }
+    }
 }
 
 @Composable
@@ -38,7 +36,6 @@ fun MyApp(viewModel: MyViewModel) {
             MyAppMessages()
         }
         CurrentPage.SETTINGS -> {
-
         }
     }
 }
@@ -51,6 +48,7 @@ class MyViewModel : ViewModel() {
         _currentPageState.value = state
     }
 }
+
 enum class CurrentPage() {
     ROOT, MESSAGES, SETTINGS
 }

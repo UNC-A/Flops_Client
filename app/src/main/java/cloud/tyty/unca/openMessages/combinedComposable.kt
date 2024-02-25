@@ -2,7 +2,7 @@ package cloud.tyty.unca.openMessages
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-import cloud.tyty.unca.WebSocketManager
+import cloud.tyty.unca.mainApp.WebSocketManager
 
 
 

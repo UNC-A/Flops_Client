@@ -7,7 +7,6 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.RoomDatabase
-import kotlinx.serialization.SerialName
 
 @Entity
 data class Messages(
@@ -20,6 +19,7 @@ data class Messages(
 @Dao
 interface UserDao
 {
+    // currently testing phase
     @Insert
     fun insertMessage(vararg messages: Messages)
 }

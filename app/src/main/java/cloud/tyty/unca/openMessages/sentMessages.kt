@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import cloud.tyty.unca.WebSocketManager
+import cloud.tyty.unca.mainApp.WebSocketManager
 import cloud.tyty.unca.serialization.Action
 import com.google.gson.Gson
 
@@ -38,7 +38,6 @@ data class TimeStampedMessages(
 
 // This calls the /websocket/Action.MessageSend data class for storing message data
 val sentMessages = mutableStateListOf<Action.MessageSend>()
-
 
 
 // Composable function for Sending Messages
@@ -72,7 +71,7 @@ fun SendMessage(sentMessages: MutableList<Action.MessageSend>, webSocketManager:
                 })
             })
     }
-    if (flag) {
+    if (flag && message.isNotEmpty()) {
         LaunchedEffect(Unit) {
             webSocketManager.send(
                 Gson().toJson(Action.MessageSend(message, (System.currentTimeMillis())))

@@ -1,4 +1,4 @@
-package cloud.tyty.unca
+package cloud.tyty.unca.mainApp
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -11,10 +11,11 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.*
 
+// wss://unca.toastxc.xyz/v1/ws/?session=fdaihbfdsuhdsa
+//const val host: String = "unca.toastxc.xyz/v0/ws/?session=fdaihbfdsuhdsa"
 const val hostIP: String = "unca.toastxc.xyz"
 const val hostPort: Int = 80
-const val hostPath: String = "/ws/"
-
+const val hostPath: String = "/v0/ws/?session=fdaihbfdsuhdsa"
 
 class WebSocketManager {
     private var session: DefaultClientWebSocketSession? = null
