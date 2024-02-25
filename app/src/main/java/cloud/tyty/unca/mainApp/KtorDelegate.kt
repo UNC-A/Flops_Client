@@ -1,8 +1,11 @@
 package cloud.tyty.unca.mainApp
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import cloud.tyty.unca.database.addMessageReceived
 import cloud.tyty.unca.serialization.Response
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -10,6 +13,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.*
+import kotlinx.coroutines.CoroutineScope
 
 // wss://unca.toastxc.xyz/v1/ws/?session=fdaihbfdsuhdsa
 //const val host: String = "unca.toastxc.xyz/v0/ws/?session=fdaihbfdsuhdsa"
@@ -41,13 +45,16 @@ class WebSocketManager {
         }
         return null
     }
-    suspend fun webSocketDelegation() {
+    suspend fun webSocketDelegation(context: Context
+    ) {
+
         while(true)
         {
             val webSocketResponse = webSocketResponse()
             if (webSocketResponse != null) {
                 when (webSocketResponse["action"].asString) {
                     "MessageSend" -> {
+                        val receivedMessage = webSocketResponse["message"].asString
                         val newMessage = Response.MessageSend(
                             message = webSocketResponse["message"].asString,
                             action = webSocketResponse["action"].asString,
@@ -55,9 +62,7 @@ class WebSocketManager {
                         )
                         // Add the new message to the list
                         receivedList.add(newMessage)
-                    }
-                    "MessageSendConfirm" ->
-                    {
+                        addMessageReceived(context, newMessage.message)
                     }
                 }
             }
@@ -66,17 +71,16 @@ class WebSocketManager {
 }
 val receivedList by mutableStateOf(mutableStateListOf<Response.MessageSend>())
 
-suspend fun main()
-{
-    val webSocketManager = WebSocketManager()
-    while (true)
-    {
-        webSocketManager.connect()
-        webSocketManager.webSocketDelegation()
-    }
-
-
-}
+//suspend fun main()
+//{
+//    val webSocketManager = WebSocketManager()
+//    while (true)
+//    {
+//        webSocketManager.connect()
+//        webSocketManager.webSocketDelegation()
+//    }
+//
+//}
 //endregion
 
 // Decoding from ByteArray to Gson class format <T> represents the enum/class type

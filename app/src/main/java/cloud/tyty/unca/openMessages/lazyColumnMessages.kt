@@ -1,5 +1,6 @@
 package cloud.tyty.unca.openMessages
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,63 +13,72 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.room.Room
+import cloud.tyty.unca.database.MessageRepository
+import cloud.tyty.unca.database.Messages
+import cloud.tyty.unca.database.MessagesDatabase
+import cloud.tyty.unca.database.UserDao
 import cloud.tyty.unca.mainApp.receivedList
 import cloud.tyty.unca.serialization.Action
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun MessageLazyColumn(
-    sentMessages: MutableList<Action.MessageSend>
+    sentMessages: MutableList<Action.MessageSend>,
+    context: Context
 ) {
-    val combinedMessageList = mutableListOf<TimeStampedMessages>()
+    var combinedMessageList by remember { mutableStateOf(listOf<Messages>()) }
 
-
-    receivedList.forEach { messages ->
-        combinedMessageList.add(
-            TimeStampedMessages(
-                messages.message, messages.timestamp, false
-            )
-        )
+    val userDao = remember {
+        val db = Room.databaseBuilder(
+            context,
+            MessagesDatabase::class.java, "Database"
+        ).build()
+        db.userDao()
     }
-    sentMessages.forEach { messages ->
-        combinedMessageList.add(
-            TimeStampedMessages(
-                messages.message, messages.timestamp, true
-            )
-        )
-    }
-    combinedMessageList.sortBy { it.timestamp }
 
-    LazyColumn() {
+    LaunchedEffect(true) {
+        // Fetch messages asynchronously
+        val messages = withContext(Dispatchers.IO) {
+            userDao.getAll()
+        }
+        // Sort the messages by timestamp
+        combinedMessageList = messages.sortedBy { it.timestamp }
+        // Update state
+    }
+
+    LazyColumn {
         items(combinedMessageList) { message ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = if (message.sent) Arrangement.End else Arrangement.Start
+                horizontalArrangement = if (message.isSent) Arrangement.End else Arrangement.Start
             ) {
                 Column(
                     modifier = Modifier.padding(
-                        start = if (message.sent) 110.dp else 20.dp,
-                        end = if (message.sent) 20.dp else 110.dp,
+                        start = if (message.isSent) 110.dp else 20.dp,
+                        end = if (message.isSent) 20.dp else 110.dp,
                         top = 4.dp
                     )
                 ) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = if (message.sent) MaterialTheme.colorScheme.secondaryContainer else (MaterialTheme.colorScheme.tertiaryContainer),
-                            contentColor = if (message.sent) MaterialTheme.colorScheme.secondary else (MaterialTheme.colorScheme.tertiary)
+                            containerColor = if (message.isSent) MaterialTheme.colorScheme.secondaryContainer else (MaterialTheme.colorScheme.tertiaryContainer),
+                            contentColor = if (message.isSent) MaterialTheme.colorScheme.secondary else (MaterialTheme.colorScheme.tertiary)
                         ),
                     ) {
-                        Text(text = message.messages, modifier = Modifier.padding(10.dp))
+                        Text(text = message.message, modifier = Modifier.padding(10.dp))
                     }
-                    // todo display time history for messages
-                    // will likely use a .groupBy() to sort as such.
-                    // This needs to be done per user - will need new schema for such a task
-//                    Text(
-//                        text = timestampConversion(message.timestamp),
-//                        modifier = Modifier,
-//                        fontSize = 8.sp
-//                    )
                 }
             }
         }

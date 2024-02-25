@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -47,7 +49,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -87,14 +88,16 @@ dependencies {
 
         val room_version = "2.6.1"
 
+    dependencies {
+        val room_version = "2.6.1"
+
         implementation("androidx.room:room-runtime:$room_version")
         annotationProcessor("androidx.room:room-compiler:$room_version")
 
         // To use Kotlin annotation processing tool (kapt)
-//        kapt("androidx.room:room-compiler:$room_version")
+        ksp("androidx.room:room-compiler:$room_version")
         // To use Kotlin Symbol Processing (KSP)
-//        ksp("androidx.room:room-compiler:$room_version")
-
+         ksp("androidx.room:room-compiler:$room_version")
         // optional - Kotlin Extensions and Coroutines support for Room
         implementation("androidx.room:room-ktx:$room_version")
 
@@ -112,5 +115,7 @@ dependencies {
 
         // optional - Paging 3 Integration
         implementation("androidx.room:room-paging:$room_version")
+    }
+
 
 }
