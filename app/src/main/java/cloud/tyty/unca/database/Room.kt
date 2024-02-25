@@ -1,8 +1,8 @@
 package cloud.tyty.unca.database
 
 import android.content.Context
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
@@ -12,12 +12,18 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-@Entity
-data class Messages(
+
+@Entity(tableName = "messages")
+data class Message(
     @PrimaryKey val timestamp: Long,
     @ColumnInfo(name = "is_sent") val isSent: Boolean,
     @ColumnInfo(name = "channel_id") val channelID: String,
@@ -26,57 +32,71 @@ data class Messages(
 
 @Dao
 interface UserDao {
-    // currently testing phase
     @Insert
-    fun insertMessage(vararg messages: Messages)
+    suspend fun insertMessage(message: Message)
 
     @Query("SELECT * FROM messages")
-    fun getAll(): List<Messages>
-}
+    fun getAllMessages(): Flow<List<Message>>}
 
-@Database(entities = [Messages::class], version = 1)
+@Database(entities = [Message::class], version = 1, exportSchema = false)
 abstract class MessagesDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
-}
 
-class MessageRepository(private val userDao: UserDao) {
-    fun insertMessage(message: Messages) {
-        userDao.insertMessage(message)
-    }
+    abstract fun itemDao(): UserDao
 
-    fun getAll(): List<Messages> {
-        return userDao.getAll()
-    }
-}
+    companion object {
+        @Volatile
+        private var Instance: MessagesDatabase? = null
 
-
-fun addMessageSent(context: Context, message: String) {
-    CoroutineScope(Dispatchers.IO).launch {
-
-        val db = Room.databaseBuilder(
-            context, MessagesDatabase::class.java, "MessagesDatabase"
-        ).build()
-        val userDao = db.userDao()
-
-        userDao.insertMessage(
-            Messages(
-                System.currentTimeMillis(), true, "channel1", message
-            )
-        )
+        fun getDatabase(context: Context): MessagesDatabase {
+            // if the Instance is not null, return it, otherwise create a new database instance.
+            return Instance ?: synchronized(this) {
+                Room.databaseBuilder(context, MessagesDatabase::class.java, "item_database")
+                    /**
+                     * Setting this option in your app's database builder means that Room
+                     * permanently deletes all data from the tables in your database when it
+                     * attempts to perform a migration with no defined migration path.
+                     */
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { Instance = it }
+            }
+        }
     }
 }
 
-fun addMessageReceived(context: Context, message: String) {
-    CoroutineScope(Dispatchers.IO).launch {
-        val db = Room.databaseBuilder(
-            context, MessagesDatabase::class.java, "MessagesDatabase"
-        ).build()
-        val userDao = db.userDao()
+interface MessagesRepository
+{
+    fun getAllMessagesStream(): Flow<List<Message>>
+    suspend fun insertItem(message: Message)
+}
+class OfflineItemsRepository(private val userDao: UserDao) : MessagesRepository {
+    override fun getAllMessagesStream(): Flow<List<Message>> = userDao.getAllMessages()
+        .catch {  } // Handle errors gracefully
+        .flowOn(Dispatchers.IO) // Perform database operations on IO thread
 
-        userDao.insertMessage(
-            Messages(
-                System.currentTimeMillis(), false, "channel1", message
-            )
-        )
+    override suspend fun insertItem(message: Message) {
+        withContext(Dispatchers.IO) { // Use coroutines for safe threading
+            userDao.insertMessage(message)
+        }
     }
 }
+
+class MessagesViewModel(private val repository: UserDao) : ViewModel() {
+
+    private val _messages = MutableStateFlow<List<Message>>(emptyList())
+    val messages: StateFlow<List<Message>> = _messages
+
+    init {
+        viewModelScope.launch {
+            repository.getAllMessages()
+                .collect { messages ->
+                    _messages.value = messages
+                }
+        }
+    }
+
+    fun insertMessage(message: Message) = viewModelScope.launch {
+        repository.insertMessage(message)
+    }
+}
+

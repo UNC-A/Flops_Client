@@ -1,5 +1,6 @@
 package cloud.tyty.unca.openMessages
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import cloud.tyty.unca.database.addMessageSent
+import cloud.tyty.unca.database.Message
+import cloud.tyty.unca.database.MessagesViewModel
 import cloud.tyty.unca.mainApp.WebSocketManager
 import cloud.tyty.unca.serialization.Action
 import com.google.gson.Gson
@@ -35,17 +37,15 @@ import com.google.gson.Gson
 // used to group and sort messages depending on sent and received
 
 
-
 // This calls the /websocket/Action.MessageSend data class for storing message data
 val sentMessages = mutableStateListOf<Action.MessageSend>()
 
 
 @Composable
 fun SendMessage(
-    sentMessages: MutableList<Action.MessageSend>,
     webSocketManager: WebSocketManager,
+    viewModel: MessagesViewModel
 ) {
-    val context = LocalContext.current
 
 
     var message by remember { mutableStateOf("") }
@@ -82,12 +82,11 @@ fun SendMessage(
             webSocketManager.send(
                 Gson().toJson(Action.MessageSend(message, (System.currentTimeMillis())))
             )
-            sentMessages.add(Action.MessageSend(message, (System.currentTimeMillis())))
-            addMessageSent(context, message)
+            val insertMessage = Message(System.currentTimeMillis(), true, "channel1", message)
+            viewModel.insertMessage(insertMessage)
+
             message = ""
         }
-
         flag = false
     }
 }
-

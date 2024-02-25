@@ -9,24 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cloud.tyty.unca.database.MessageRepository
+import cloud.tyty.unca.database.MessagesViewModel
 import cloud.tyty.unca.mainApp.WebSocketManager
 
-@Composable
-fun openGroupScaffold(webSocketManager: WebSocketManager, context: Context) {
-
-    Scaffold(topBar = {
-        topAppBarMessages()
-    }, bottomBar = {
-        Alignment.Bottom
-        SendMessage(sentMessages, webSocketManager)
-
-    }) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            MessageLazyColumn(sentMessages = sentMessages, context)
-        }
-    }
-}
