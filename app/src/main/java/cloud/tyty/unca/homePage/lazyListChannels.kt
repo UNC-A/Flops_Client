@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,10 +37,11 @@ fun lazyListChannels() {
     })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootCards(users: dummyUsers)
 {
-    Card()
+    ElevatedCard(onClick = {/*todo */})
     {
         Column(modifier = Modifier
             .fillMaxWidth()) {
@@ -57,7 +60,7 @@ fun RootCards(users: dummyUsers)
                     Text(text = users.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                     Text(text = users.lastMessage, maxLines = 2)
                 }
-                Text(text = timeStampLazyList(users.timestamp), style = MaterialTheme.typography.labelSmall, maxLines = 1)
+                Text(text = timeStampLazyList(System.currentTimeMillis()), style = MaterialTheme.typography.labelSmall, maxLines = 1)
             }
         }
     }

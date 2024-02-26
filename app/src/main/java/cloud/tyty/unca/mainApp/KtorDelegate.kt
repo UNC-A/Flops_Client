@@ -2,6 +2,7 @@ package cloud.tyty.unca.mainApp
 
 import cloud.tyty.unca.database.Message
 import cloud.tyty.unca.database.MessagesViewModel
+import cloud.tyty.unca.serialization.Action
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.ktor.client.HttpClient
@@ -13,7 +14,7 @@ import io.ktor.websocket.*
 //const val host: String = "unca.toastxc.xyz/v0/ws/?session=fdaihbfdsuhdsa"
 const val hostIP: String = "unca.toastxc.xyz"
 const val hostPort: Int = 80
-const val hostPath: String = "/v0/ws/?session=fdaihbfdsuhdsa"
+const val hostPath: String = "/v1/ws/?session=fdaihbfdsuhdsa"
 
 class WebSocketManager {
     private var session: DefaultClientWebSocketSession? = null
@@ -24,6 +25,9 @@ class WebSocketManager {
     }
     suspend fun send(message: String) {
         session?.send(message)
+    }
+    suspend fun sendTypeStatus(typeStatus: String) {
+        session?.send(typeStatus)
     }
     private suspend fun webSocketResponse(): JsonObject? {
         session?.let { session ->
@@ -46,10 +50,11 @@ class WebSocketManager {
             if (webSocketResponse != null) {
                 when (webSocketResponse["action"].asString) {
                     "MessageSend" -> {
-                        val receivedMessage = webSocketResponse["message"].asString
+                        val content = webSocketResponse["content"].asString
+                        val channel = webSocketResponse[""]
 
                         // Add the new message to the list
-                        val receivedMessages = Message(System.currentTimeMillis(), false, "channel1", receivedMessage)
+                        val receivedMessages = Message(System.currentTimeMillis(), false, "channel1", content)
                         viewModel.insertMessage(receivedMessages)
                     }
                 }

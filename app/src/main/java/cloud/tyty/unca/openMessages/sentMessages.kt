@@ -32,12 +32,13 @@ import com.google.gson.Gson
 
 @Composable
 fun SendMessage(
-    webSocketManager: WebSocketManager,
-    viewModel: MessagesViewModel
+    webSocketManager: WebSocketManager, viewModel: MessagesViewModel
 ) {
 
     var message by remember { mutableStateOf("") }
     var flag by remember { mutableStateOf(false) }
+    var typeStatusFlag by remember { mutableStateOf(false) }
+
 
     Row(
         Modifier
@@ -48,13 +49,22 @@ fun SendMessage(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextField(value = message,
-            onValueChange = { message = it },
+            onValueChange = {
+                message = it
+                if (message.isNotEmpty()) {
+                    typeStatusFlag = true
+                }
+            },
+
             Modifier
                 .weight(1f)
                 .clip(MaterialTheme.shapes.medium.copy(CornerSize(10.dp))),
             placeholder = { Text(text = "Message") },
             trailingIcon = {
-                IconButton(onClick = { flag = true }, content = {
+                IconButton(onClick = {
+                    flag = true
+                    typeStatusFlag = true
+                }, content = {
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = null,
@@ -64,16 +74,38 @@ fun SendMessage(
                 })
             })
     }
+    if (typeStatusFlag) {
+        LaunchedEffect(Unit) {
+            webSocketManager.sendTypeStatus(
+                Gson().toJson(
+                    Action.TypeStatus(
+                        typing = typeStatusFlag, channel = "gfuoghlsduifhuguda"
+                    )
+                )
+            )
+        }
+    }
+
     if (flag && message.isNotEmpty()) {
         LaunchedEffect(Unit) {
             webSocketManager.send(
-                Gson().toJson(Action.MessageSend(message, (System.currentTimeMillis())))
+                Gson().toJson(Action.MessageSend(content = message, channel = "gfuoghlsduifhuguda"))
             )
-            val insertMessage = Message(System.currentTimeMillis(), true, "channel1", message)
+            webSocketManager.sendTypeStatus(
+                Gson().toJson(
+                    Action.TypeStatus(
+                        typing = false, channel = "gfuoghlsduifhuguda"
+                    )
+                )
+            )
+
+            val insertMessage =
+                Message(System.currentTimeMillis(), true, "gfuoghlsduifhuguda", message)
             viewModel.insertMessage(insertMessage)
 
             message = ""
         }
         flag = false
+        typeStatusFlag = true
     }
 }
