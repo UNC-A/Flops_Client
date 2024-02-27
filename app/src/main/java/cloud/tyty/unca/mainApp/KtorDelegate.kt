@@ -2,7 +2,7 @@ package cloud.tyty.unca.mainApp
 
 import cloud.tyty.unca.database.Message
 import cloud.tyty.unca.database.MessagesViewModel
-import cloud.tyty.unca.serialization.Action
+import cloud.tyty.unca.serialization.Response
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.ktor.client.HttpClient
@@ -57,8 +57,18 @@ class WebSocketManager {
                         val receivedMessages = Message(System.currentTimeMillis(), false, "channel1", content)
                         viewModel.insertMessage(receivedMessages)
                     }
+                    "TypeStatus" -> {
+                        val typing = webSocketResponse["typing"].asBoolean
+                        val channel = webSocketResponse["channel"].asString
+                        val author = webSocketResponse["author"].asString
+
+                        val userTypeStatus = Response.TypeStatus("TypeStatus", typing, channel, author)
+
+                        isTyping.add(userTypeStatus)
+                    }
                 }
             }
         }
     }
 }
+val isTyping = mutableListOf<Response.TypeStatus>()
