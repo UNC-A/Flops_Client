@@ -1,5 +1,4 @@
 package cloud.tyty.unca.openMessages
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +29,6 @@ import androidx.lifecycle.viewModelScope
 import cloud.tyty.unca.database.Message
 import cloud.tyty.unca.database.MessagesViewModel
 import cloud.tyty.unca.mainApp.WebSocketManager
-import cloud.tyty.unca.mainApp.isTyping
 import cloud.tyty.unca.serialization.Action
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -74,14 +71,12 @@ fun SendMessage(
 
             Modifier
                 .weight(1f)
-                .clip(MaterialTheme.shapes.medium.copy(CornerSize(10.dp)))
-                .onFocusChanged { isFocused = !isFocused },
+                .clip(MaterialTheme.shapes.medium.copy(CornerSize(10.dp))),
             maxLines = 3,
             placeholder = { Text(text = "Message") },
             trailingIcon = {
                 IconButton(onClick = {
                     flag = true
-                    typeStatusFlag = true
                 }, content = {
                     Icon(
                         imageVector = Icons.Default.Send,
