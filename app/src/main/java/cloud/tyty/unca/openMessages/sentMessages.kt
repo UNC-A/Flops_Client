@@ -92,45 +92,30 @@ fun SendMessage(
                 })
             })
     }
-    if (typeStatusFlag) {
-        LaunchedEffect(Unit) {
-            webSocketManager.sendTypeStatus(
-                Gson().toJson(
-                    Action.TypeStatus(
-                        typing = typeStatusFlag, channel = "gfuoghlsduifhuguda"
-                    )
+    LaunchedEffect(typeStatusFlag) {
+        webSocketManager.sendTypeStatus(
+            Gson().toJson(
+                Action.TypeStatus(
+                    typing = typeStatusFlag, channel = "gfuoghlsduifhuguda"
                 )
             )
-        }
-
-    } else {
-        LaunchedEffect(Unit) {
-            webSocketManager.sendTypeStatus(
-                Gson().toJson(
-                    Action.TypeStatus(
-                        typing = false, channel = "gfuoghlsduifhuguda"
-                    )
-                )
-            )
-        }
+        )
     }
-    if (flag && message.isNotEmpty()) {
-        LaunchedEffect(Unit) {
-            webSocketManager.send(
-                Gson().toJson(
-                    Action.MessageSend(
-                        content = message,
-                        channel = "gfuoghlsduifhuguda"
-                    )
+    LaunchedEffect(flag && message.isNotEmpty()) {
+        webSocketManager.send(
+            Gson().toJson(
+                Action.MessageSend(
+                    content = message,
+                    channel = "gfuoghlsduifhuguda"
                 )
             )
-            val insertMessage =
-                Message(System.currentTimeMillis(), true, "gfuoghlsduifhuguda", message)
-            viewModel.insertMessage(insertMessage)
-
-            message = ""
-        }
+        )
+        val insertMessage = Message(System.currentTimeMillis(), true, "gfuoghlsduifhuguda", message)
+        viewModel.insertMessage(insertMessage)
+        message = ""
+        typeStatusFlag = false
         flag = false
     }
+
 
 }
