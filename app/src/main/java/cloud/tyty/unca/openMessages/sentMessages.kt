@@ -1,4 +1,5 @@
 package cloud.tyty.unca.openMessages
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +43,6 @@ fun SendMessage(
     var message by remember { mutableStateOf("") }
     var flag by remember { mutableStateOf(false) }
     var typeStatusFlag by remember { mutableStateOf(false) }
-    var isFocused by remember { mutableStateOf(false) }
     var isTyping by remember { mutableLongStateOf(0) }
 
 
@@ -96,21 +96,21 @@ fun SendMessage(
             )
         )
     }
-    LaunchedEffect(flag && message.isNotEmpty()) {
-        webSocketManager.send(
-            Gson().toJson(
-                Action.MessageSend(
-                    content = message,
-                    channel = "gfuoghlsduifhuguda"
+    if (flag && message.isNotBlank()) {
+        LaunchedEffect(Unit) {
+
+            webSocketManager.send(
+                Gson().toJson(
+                    Action.MessageSend(
+                        content = message, channel = "gfuoghlsduifhuguda"
+                    )
                 )
             )
-        )
-        val insertMessage = Message(System.currentTimeMillis(), true, "gfuoghlsduifhuguda", message)
-        viewModel.insertMessage(insertMessage)
-        message = ""
-        typeStatusFlag = false
-        flag = false
+            val insertMessage =
+                Message(System.currentTimeMillis(), true, "gfuoghlsduifhuguda", message)
+            viewModel.insertMessage(insertMessage)
+            message = ""
+            flag = false
+        }
     }
-
-
 }

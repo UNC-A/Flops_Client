@@ -49,7 +49,7 @@ fun MyApp(viewModel: MyViewModel, messagesViewModel: MessagesViewModel) {
     val currentPageState by viewModel.currentPageState.collectAsState()
     when (currentPageState) {
         CurrentPage.ROOT -> {
-            HomeScaffold()
+            HomeScaffold(messagesViewModel)
         }
         CurrentPage.MESSAGES -> {
             MyAppMessages(messagesViewModel)

@@ -62,13 +62,9 @@ class WebSocketManager {
                         val channel = webSocketResponse["channel"].asString
                         val author = webSocketResponse["author"].asString
 
-                        val userTypeStatus = Response.TypeStatus("TypeStatus", typing, channel, author)
-
-                        isTyping.add(userTypeStatus)
                     }
                 }
             }
         }
     }
 }
-val isTyping = mutableListOf<Response.TypeStatus>()

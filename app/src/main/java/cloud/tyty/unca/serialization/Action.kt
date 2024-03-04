@@ -10,7 +10,6 @@ sealed class Action {
         val content: String,
         val channel: String, // todo channel id
         val action: String = "MessageSend"
-
         )
 
     // note: if typing == true in more than one channels; the oldest will be removed

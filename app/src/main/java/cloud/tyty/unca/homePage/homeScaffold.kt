@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cloud.tyty.unca.database.MessagesViewModel
 
 
-@Preview
 @Composable
-fun HomeScaffold() {
+fun HomeScaffold(messagesViewModel: MessagesViewModel) {
 
     Scaffold(
         topBar = {
@@ -24,7 +24,7 @@ fun HomeScaffold() {
             modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            lazyListChannels()
+            lazyListChannels(messagesViewModel)
         }
     }
 }

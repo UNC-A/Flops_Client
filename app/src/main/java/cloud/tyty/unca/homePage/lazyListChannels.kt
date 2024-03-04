@@ -16,30 +16,42 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cloud.tyty.unca.database.Message
+import cloud.tyty.unca.database.MessagesViewModel
 import cloud.tyty.unca.timeStampLazyList
 
-@Preview
 @Composable
-fun lazyListChannels() {
-    addDummyUsers()
-    dummyUserList.sortBy { it.timestamp }
+fun lazyListChannels(messagesViewModel: MessagesViewModel) {
 
-    LazyColumn(modifier = Modifier.fillMaxWidth(), content = {
-        items(dummyUserList) { users ->
+    val users = messagesViewModel.messages.collectAsState()
+    val userValue = users.value
+    val uniqueChannels = userValue.groupBy { it.channelID }.values.map { it.last() }
+    val userSorted = uniqueChannels.sortedByDescending { it.timestamp }
+
+
+    messagesViewModel.getAllMessages()
+
+
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+
+        items(userSorted) { users ->
+
             Spacer(modifier = Modifier.padding(vertical = 1.dp))
             RootCards(users = users)
         }
-    })
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootCards(users: dummyUsers)
+fun RootCards(users: Message)
 {
     ElevatedCard(onClick = {/*todo */})
     {
@@ -52,41 +64,18 @@ fun RootCards(users: dummyUsers)
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
                 Column(modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .padding(vertical = 15.dp))
                 {
-                    Text(text = users.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                    Text(text = users.lastMessage, maxLines = 2)
+                    Text(text = users.channelID, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                    Text(text = users.message, maxLines = 2)
                 }
-                Text(text = timeStampLazyList(System.currentTimeMillis()), style = MaterialTheme.typography.labelSmall, maxLines = 1)
+
+                Text(text = timeStampLazyList(users.timestamp), style = MaterialTheme.typography.labelSmall, maxLines = 1)
             }
         }
     }
-}
-
-data class dummyUsers(
-    val name: String, val timestamp: Long, val lastMessage: String, val icon: ImageVector
-)
-val dummyUserList = mutableListOf<dummyUsers>()
-fun addDummyUsers() {
-    dummyUserList.add(
-        dummyUsers(
-            "Kaia",
-            timestamp = 1708576972,
-            lastMessage = "How are you doing today? Remember, we have dinner tonight at 6!",
-            icon = Icons.Default.AccountCircle
-        )
-    )
-    dummyUserList.add(
-        dummyUsers(
-            "Ashy",
-            1708579723,
-            "Hello, I am just writing this to test the effectiveness of the lazyColumn",
-            Icons.Default.AccountCircle
-        )
-    )
 }
 
 
